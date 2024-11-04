@@ -57,7 +57,7 @@ class MultiLabelSMOTE:
         #X_sub, y_sub = self.get_minority_instace(X, y) # X_sub e y_sub sono sotto matrici di X e y
 
         if not(self.fitted):
-            raise NotFittedError
+            raise NotFittedError("This MultiLabelSMOTE instance is not fitted yet. Call 'fit' with appropriate arguments before using this sampler.")
 
         indices2 = self.nearest_neighbour(self.X_sub)
         n = len(indices2)
