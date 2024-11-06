@@ -36,8 +36,8 @@ class MultiLabelSMOTE:
 
     
     def fit(self, X: pd.DataFrame, y: pd.DataFrame):
-        self.nbs.fit(X)
         self.X_sub, self.y_sub = self.get_minority_instace(X, y) # X_sub e y_sub sono sotto matrici di X e y
+        self.nbs.fit(self.X_sub)
         self.fitted = True
 
     def resample(self, X: pd.DataFrame, y: pd.DataFrame, n_sample : int = 5):
@@ -73,7 +73,7 @@ class MultiLabelSMOTE:
             ratio = random.random() #lambda
             # x_i = X_sub.loc[reference,:]
             # x_zi = self.X_sub.loc[neighbour,:] (vicino selezionato)
-            gap = self.X_sub.iloc[reference,:] - self.X_sub.iloc[neighbour,:]
+            gap = self.X_sub.loc[reference,:] - self.X_sub.loc[neighbour,:]
             # new_X[i] = np.array(self.X_sub.loc[reference,:] + ratio * gap)
             new_X[i] = np.round(np.abs(self.X_sub.loc[reference,:] + ratio * gap)).astype(int)
         new_X = pd.DataFrame(new_X, columns=self.X_sub.columns)
@@ -140,8 +140,8 @@ class MultiLabelSMOTE:
         y_sub: pandas.DataFrame, the target vector minority dataframe
         """
         index = self.get_index(y)
-        X_sub = X[X.index.isin(index)].reset_index(drop = True) #TODO: serve reset_index?
-        y_sub = y[y.index.isin(index)].reset_index(drop = True) #TODO: serve reset_index?
+        X_sub = X[X.index.isin(index)].reset_index(drop = True)
+        y_sub = y[y.index.isin(index)].reset_index(drop = True)
         return X_sub, y_sub
     
     def nearest_neighbour(self, X: pd.DataFrame):
