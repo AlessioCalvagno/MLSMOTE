@@ -113,7 +113,7 @@ def MLSMOTE(X,y, n_sample):
     target = np.zeros((n_sample, y.shape[1]))
     for i in range(n_sample):
         reference = random.randint(0,n-1)
-        neighbour = random.choice(indices2[reference,1:])
+        neighbour = np.random.choice(indices2[reference,1:])
         all_point = indices2[reference]
         nn_df = y[y.index.isin(all_point)]
         ser = nn_df.sum(axis = 0, skipna = True)

@@ -13,7 +13,7 @@ class MultiLabelSMOTE:
         n_neighbors: int (default 5), neighbors number, to be used in NearestNeighBors instance.
 
         """
-        self.nbs=NearestNeighbors(n_neighbors=n_neighbors, metric='euclidean', algorithm='kd_tree')
+        self.nbs=NearestNeighbors(n_neighbors=n_neighbors, metric='cityblock', algorithm='kd_tree')
         self.X_sub = pd.DataFrame()
         self.y_sub = pd.DataFrame()
         self.fitted = False
@@ -65,14 +65,17 @@ class MultiLabelSMOTE:
         target = np.zeros((n_sample, self.y_sub.shape[1]))
         for i in range(n_sample):
             reference = random.randint(0,n-1)
-            neighbour = random.choice(indices2[reference,1:])
+            neighbour = np.random.choice(indices2[reference,1:]) #prendo un vicino random tra i k selezionati
             all_point = indices2[reference]
             nn_df = self.y_sub[self.y_sub.index.isin(all_point)]
             ser = nn_df.sum(axis = 0, skipna = True)
             target[i] = np.array([1 if val>2 else 0 for val in ser])
-            ratio = random.random()
-            gap = self.X_sub.loc[reference,:] - self.X_sub.loc[neighbour,:]
-            new_X[i] = np.array(self.X_sub.loc[reference,:] + ratio * gap)
+            ratio = random.random() #lambda
+            # x_i = X_sub.loc[reference,:]
+            # x_zi = self.X_sub.loc[neighbour,:] (vicino selezionato)
+            gap = self.X_sub.iloc[reference,:] - self.X_sub.iloc[neighbour,:]
+            # new_X[i] = np.array(self.X_sub.loc[reference,:] + ratio * gap)
+            new_X[i] = np.round(np.abs(self.X_sub.loc[reference,:] + ratio * gap)).astype(int)
         new_X = pd.DataFrame(new_X, columns=self.X_sub.columns)
         target = pd.DataFrame(target, columns=self.y_sub.columns)
         # new_X = pd.concat([X_sub, new_X], axis=0)
