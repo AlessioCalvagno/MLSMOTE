@@ -120,7 +120,8 @@ class MultiLabelSMOTE:
         return
         index: list, a list containing index number of all the tail label
         """
-        tail_labels = self.get_tail_label(df)
+        # tail_labels = self.get_tail_label(df)
+        tail_labels = df.columns
         index = set()
         for tail_label in tail_labels:
             sub_index = set(df[df[tail_label]==1].index)
